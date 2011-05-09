@@ -84,8 +84,8 @@ def encode(fpath):
 	if cfg['a_lang']: a_opts += ' -alang %s' % ','.join(cfg['a_lang'])
 	if cfg['a_id'] != -1: a_opts += ' -aid %d' % cfg['a_id']
 
-	if a_chs <= 2: pan_opts = ''
-	elif a_chs == 6: pan_opts = '-af pan=2:0.5:0:0:0.5:0.33:0:0:0.33:0.5:0.5:0.5:0.5'
+	if a_chs <= 2: pass
+	elif a_chs == 6: a_opts += ' -af-add pan=2:0.5:0:0:0.5:0.33:0:0:0.33:0.5:0.5:0.5:0.5'
 	else:
 		print >> sys.stderr, '* Downmixing %d channel to stereo is not supported' % a_chs
 		return False
@@ -104,13 +104,11 @@ def encode(fpath):
 
 			%s
 			%s
-			%s
 			''' % (
 				sh_escape(fpath), sh_escape(new_fpath),
 				new_w, new_h,
 				s_opts,
 				a_opts,
-				pan_opts,
 				)
 
 		if False: # Broken: This method does not generate a valid video stream
@@ -162,13 +160,11 @@ def encode(fpath):
 				-demuxer lavf
 
 				%s
-				%s
 
 				|
 				''' % (
 					sh_escape(fpath),
 					a_opts,
-					pan_opts,
 					)
 
 			a_ch_opts = '-i -'
