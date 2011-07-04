@@ -3,6 +3,7 @@
 import sys
 import os
 import re
+import shutil
 
 CFG_FPATH = '~/.encoderc'
 
@@ -91,7 +92,8 @@ def encode(fpath):
 		return False
 
 	if cfg['use_mencoder']:
-		new_fpath = cfg['out_dir']+'/'+fname[:fname.rindex('.')]+'.avi'
+		tmp_fpath = cfg['tmp_dir']+'/'+fname[:fname.rindex('.')]+'.avi'
+		out_fpath = cfg['out_dir']+'/'+fname[:fname.rindex('.')]+'.avi'
 
 		cmd = '''
 			mencoder %s -o %s
@@ -105,7 +107,7 @@ def encode(fpath):
 			%s
 			%s
 			''' % (
-				sh_escape(fpath), sh_escape(new_fpath),
+				sh_escape(fpath), sh_escape(tmp_fpath),
 				new_w, new_h,
 				s_opts,
 				a_opts,
@@ -145,7 +147,8 @@ def encode(fpath):
 					cfg['a_br'],
 					)
 	else:
-		new_fpath = cfg['out_dir']+'/'+fname[:fname.rindex('.')]+'.mp4'
+		tmp_fpath = cfg['tmp_dir']+'/'+fname[:fname.rindex('.')]+'.mp4'
+		out_fpath = cfg['out_dir']+'/'+fname[:fname.rindex('.')]+'.mp4'
 
 		cmd = ''
 		a_ch_opts = ''
@@ -178,7 +181,7 @@ def encode(fpath):
 				new_w, new_h,
 				cfg['v_br'],
 				cfg['a_br'],
-				sh_escape(new_fpath),
+				sh_escape(tmp_fpath),
 				)
 
 	if cfg['debug']: print >> sys.stderr, '** Command before processing begins\n%s\n** Command before processing ends' % cmd
@@ -190,10 +193,15 @@ def encode(fpath):
 
 	if os.system(cmd):
 		if not cfg['keep_unfinished']:
-			try: os.remove(new_fpath)
+			try: os.remove(tmp_fpath)
 			except OSError: pass
 
 		print >> sys.stderr, '* Program returned an error'
+		return False
+
+	try: shutil.move(tmp_fpath, out_fpath)
+	except IOError:
+		print >> sys.stderr, '* File cannot be moved to output directory'
 		return False
 
 	return True

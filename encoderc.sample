@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Place this file at ~/.encoderc
+
 cfg = {}
 
 cfg['debug'] = False
 
 cfg['out_dir'] = '/home/barosl/encoded'
+cfg['tmp_dir'] = '/home/barosl/encoded/.tmp'
 cfg['threads'] = 3
 cfg['use_mencoder'] = False
 cfg['keep_unfinished'] = False
