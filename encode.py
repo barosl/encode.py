@@ -191,20 +191,22 @@ def encode(fpath):
 
 	if cfg['debug']: print >> sys.stderr, '** Command after processing begins\n%s\n** Command after processing ends' % cmd
 
+	res = True
+
 	if os.system(cmd):
-		if not cfg['keep_unfinished']:
-			try: os.remove(tmp_fpath)
-			except OSError: pass
-
 		print >> sys.stderr, '* Program returned an error'
-		return False
+		res = False
+	else:
+		try: shutil.move(tmp_fpath, out_fpath)
+		except IOError:
+			print >> sys.stderr, '* File cannot be moved to output directory'
+			res = False
 
-	try: shutil.move(tmp_fpath, out_fpath)
-	except IOError:
-		print >> sys.stderr, '* File cannot be moved to output directory'
-		return False
+	if not res and not cfg['keep_unfinished']:
+		try: os.remove(tmp_fpath)
+		except OSError: pass
 
-	return True
+	return res
 
 def main():
 	if len(sys.argv) < 2:
