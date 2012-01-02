@@ -173,7 +173,7 @@ def encode(fpath):
 			a_ch_opts = '-i -'
 
 		cmd += '''
-			ffmpeg -y -threads %d -i %s %s -vcodec libx264 -vpre hq -s %dx%d -b %dk -acodec libfaac -ab %dk -ac 2 %s
+			ffmpeg -y -threads %d -i %s %s -vcodec libx264 -vpre medium -s %dx%d -b %dk -acodec libfaac -ab %dk -ac 2 %s
 			''' % (
 				cfg['threads'],
 				sh_escape(fpath),
